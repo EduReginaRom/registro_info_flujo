@@ -70,6 +70,9 @@ if opcion_tienda != "Seleccionar":
         conversion = (personas_compraron / personas_entraron * 100) if personas_entraron > 0 else 0
         st.markdown(f"<div style='margin-top:35px; font-size:20px; font-weight:bold;'>Conversión de venta:<br>{conversion:.2f}%</div>", unsafe_allow_html=True)
 
+    if personas_compraron > personas_entraron:
+        st.error("⚠️ El número de personas que compraron no puede ser mayor al número de personas que ingresaron.")
+
     comentarios = st.text_area("Comentarios u observaciones (opcional)")
 
     st.markdown("### Modelos Solicitados")
@@ -89,15 +92,27 @@ if opcion_tienda != "Seleccionar":
             modelos_data.append((modelo, color, talla))
 
     if st.button("Enviar registro"):
-        # Guardar datos generales en hoja principal
-        datos_generales = [fecha.strftime("%Y-%m-%d"), hora_formateada, opcion_tienda, vendedora,
-                          personas_entraron, personas_compraron, f"{conversion:.2f}%", comentarios]
-        sheet.append_row(datos_generales)
+        if personas_compraron > personas_entraron:
+            st.error("No se puede registrar: el número de personas que compraron excede al número de personas que ingresaron.")
+        else:
+            # Guardar datos generales en hoja principal
+            datos_generales = [fecha.strftime("%Y-%m-%d"), hora_formateada, opcion_tienda, vendedora,
+                            personas_entraron, personas_compraron, f"{conversion:.2f}%", comentarios]
+            sheet.append_row(datos_generales)
 
-        # Guardar modelos back in stock en hoja separada
-        for m in modelos_data:
-            fila_back = [fecha.strftime("%Y-%m-%d"), hora_formateada, opcion_tienda, vendedora, m[0], m[1], m[2]]
-            back_in_stock_sheet.append_row(fila_back)
-            time.sleep(1)  # Evita error 429 por exceso de escritura simultánea
+            # Guardar modelos back in stock en hoja separada
+            for m in modelos_data:
+                fila_back = [fecha.strftime("%Y-%m-%d"), hora_formateada, opcion_tienda, vendedora, m[0], m[1], m[2]]
+                back_in_stock_sheet.append_row(fila_back)
+                time.sleep(1)  # Evita error 429 por exceso de escritura simultánea
 
-        st.success("Registro exitoso.")
+            st.markdown("""
+            <div style='text-align:center;'>
+                <h3 style='color:green;'>✅ Registro exitoso</h3>
+                <script>
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2500);
+                </script>
+            </div>
+            """, unsafe_allow_html=True)
