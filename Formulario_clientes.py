@@ -24,6 +24,15 @@ st.markdown("""
             width: 100% !important;
         }
     }
+    .registro-exitoso {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+        font-size: 24px;
+        color: green;
+        font-weight: bold;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -107,12 +116,10 @@ if opcion_tienda != "Seleccionar":
                 time.sleep(1)  # Evita error 429 por exceso de escritura simultánea
 
             st.markdown("""
-            <div style='text-align:center;'>
-                <h3 style='color:green;'>✅ Registro exitoso</h3>
-                <script>
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 2500);
-                </script>
-            </div>
+            <div class='registro-exitoso'>✅ Registro exitoso</div>
+            <script>
+                setTimeout(function() {
+                    window.location.href = window.location.href;
+                }, 3000);
+            </script>
             """, unsafe_allow_html=True)
