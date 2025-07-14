@@ -25,13 +25,19 @@ st.markdown("""
         }
     }
     .registro-exitoso {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 200px;
-        font-size: 24px;
+        position: fixed;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #e6ffe6;
+        border: 2px solid green;
+        padding: 1.5rem 2rem;
+        font-size: 26px;
         color: green;
         font-weight: bold;
+        border-radius: 10px;
+        z-index: 9999;
+        text-align: center;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -69,7 +75,7 @@ if opcion_tienda != "Seleccionar":
     if opcion_tienda == "Monte Líbano":
         vendedora = st.selectbox("Vendedora:", ["Patricia Cedillo", "Rebeca Tellez"])
     elif opcion_tienda == "Midtown":
-        vendedora = st.selectbox("Vendedora:", ["Ana Isabel Osuna"])
+        vendedora = st.selectbox("Vendedora:", ["Ana Isabel Osuna", "Carmen Lizette Ramirez"])
 
     col1, col2 = st.columns([2, 1])
     with col1:
@@ -119,7 +125,7 @@ if opcion_tienda != "Seleccionar":
             <div class='registro-exitoso'>✅ Registro exitoso</div>
             <script>
                 setTimeout(function() {
-                    window.location.href = window.location.href;
+                    window.location.reload();
                 }, 3000);
             </script>
             """, unsafe_allow_html=True)
