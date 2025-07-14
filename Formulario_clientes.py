@@ -43,6 +43,16 @@ opcion_tienda = st.selectbox("Selecciona tienda:", ["Seleccionar", "Monte Líban
 if opcion_tienda != "Seleccionar":
     st.subheader(f"Formulario - {opcion_tienda}")
 
+    st.markdown("""
+    **Instrucciones:**
+    1. Selecciona la fecha  
+    2. Selecciona la hora  
+    3. Selecciona la vendedora  
+    4. Ingresa la cantidad de personas que visitaron la tienda en el día.  
+    5. Ingresa la cantidad de personas que compraron  
+    6. Comentarios acerca de incidencias
+    """)
+
     fecha = st.date_input("Fecha", datetime.today())
     hora = st.time_input("Hora")
 
@@ -62,6 +72,11 @@ if opcion_tienda != "Seleccionar":
     comentarios = st.text_area("Comentarios u observaciones (opcional)")
 
     st.markdown("### Modelos Solicitados")
+
+    st.markdown("""
+    **Instrucciones:**  
+    1. Ingresa los modelos, colores y tallas que no tuvimos disponibles a la venta durante el día.
+    """)
 
     modelos_data = []
     for i in range(10):
