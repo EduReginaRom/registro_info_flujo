@@ -2,10 +2,32 @@ import streamlit as st
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-import time
 import json
+import time
 
-# CONFIGURACIÓN GOOGLE SHEETS
+# ESTILOS CSS PARA MÓVIL
+st.markdown("""
+    <style>
+    .block-container {
+        padding: 1rem;
+    }
+    input, textarea, select {
+        font-size: 16px !important;
+    }
+    .stTextInput > div > input,
+    .stSelectbox > div > div {
+        width: 100% !important;
+    }
+    @media (max-width: 600px) {
+        .stColumn {
+            display: block;
+            width: 100% !important;
+        }
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# CONFIGURACIÓN GOOGLE SHEETS DESDE SECRETO
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 credentials_dict = json.loads(st.secrets["GOOGLE_CREDENTIALS"])
 creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
@@ -21,36 +43,28 @@ opcion_tienda = st.selectbox("Selecciona tienda:", ["Seleccionar", "Monte Líban
 if opcion_tienda != "Seleccionar":
     st.subheader(f"Formulario - {opcion_tienda}")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        fecha = st.date_input("Fecha", datetime.today())
-    with col2:
-        hora = st.time_input("Hora")
+    fecha = st.date_input("Fecha", datetime.today())
+    hora = st.time_input("Hora")
 
     if opcion_tienda == "Monte Líbano":
         vendedora = st.selectbox("Vendedora:", ["Patricia Cedillo", "Rebeca Tellez"])
     elif opcion_tienda == "Midtown":
-        vendedora = st.selectbox("Vendedora:", ["Ana Isabel Osuna", "Carmen Lizette Ramirez"])
+        vendedora = st.selectbox("Vendedora:", ["Ana Isabel Osuna"])
 
-    col_left, col_right = st.columns([2, 1])
-    with col_left:
-        personas_entraron = st.number_input("Personas que ingresaron", min_value=0, step=1)
-        personas_compraron = st.number_input("Personas que compraron", min_value=0, step=1)
-    with col_right:
-        conversion = (personas_compraron / personas_entraron * 100) if personas_entraron > 0 else 0
-        st.markdown(f"<div style='margin-top:35px; font-size:20px; font-weight:bold;'>Conversión de venta:<br>{conversion:.2f}%</div>", unsafe_allow_html=True)
+    personas_entraron = st.number_input("Personas que ingresaron", min_value=0, step=1)
+    personas_compraron = st.number_input("Personas que compraron", min_value=0, step=1)
+    conversion = (personas_compraron / personas_entraron * 100) if personas_entraron > 0 else 0
+    st.markdown(f"<div style='font-size:20px; font-weight:bold;'>Conversión de venta: {conversion:.2f}%</div>", unsafe_allow_html=True)
 
     comentarios = st.text_area("Comentarios u observaciones (opcional)")
 
     st.markdown("### Modelos Solicitados")
-    st.markdown("**Modelo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Color &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Talla**", unsafe_allow_html=True)
 
     modelos_data = []
-    for i in range(8):
-        cols = st.columns([3, 3, 2], gap="small")
-        modelo = cols[0].text_input("", key=f"modelo_{i}")
-        color = cols[1].text_input("", key=f"color_{i}")
-        talla = cols[2].text_input("", key=f"talla_{i}")
+    for i in range(10):
+        modelo = st.text_input(f"Modelo {i+1}", key=f"modelo_{i}")
+        color = st.text_input(f"Color {i+1}", key=f"color_{i}")
+        talla = st.text_input(f"Talla {i+1}", key=f"talla_{i}")
         if modelo or color or talla:
             modelos_data.append((modelo, color, talla))
 
