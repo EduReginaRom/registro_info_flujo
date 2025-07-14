@@ -54,7 +54,8 @@ if opcion_tienda != "Seleccionar":
     """)
 
     fecha = st.date_input("Fecha", datetime.today())
-    hora = st.time_input("Hora")
+    hora_raw = st.time_input("Hora")
+    hora_formateada = hora_raw.strftime("%I:%M %p")  # Formato 12 horas
 
     if opcion_tienda == "Monte Líbano":
         vendedora = st.selectbox("Vendedora:", ["Patricia Cedillo", "Rebeca Tellez"])
@@ -89,13 +90,13 @@ if opcion_tienda != "Seleccionar":
 
     if st.button("Enviar registro"):
         # Guardar datos generales en hoja principal
-        datos_generales = [fecha.strftime("%Y-%m-%d"), hora.strftime("%H:%M"), opcion_tienda, vendedora,
+        datos_generales = [fecha.strftime("%Y-%m-%d"), hora_formateada, opcion_tienda, vendedora,
                           personas_entraron, personas_compraron, f"{conversion:.2f}%", comentarios]
         sheet.append_row(datos_generales)
 
         # Guardar modelos back in stock en hoja separada
         for m in modelos_data:
-            fila_back = [fecha.strftime("%Y-%m-%d"), hora.strftime("%H:%M"), opcion_tienda, vendedora, m[0], m[1], m[2]]
+            fila_back = [fecha.strftime("%Y-%m-%d"), hora_formateada, opcion_tienda, vendedora, m[0], m[1], m[2]]
             back_in_stock_sheet.append_row(fila_back)
             time.sleep(1)  # Evita error 429 por exceso de escritura simultánea
 
