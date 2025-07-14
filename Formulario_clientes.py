@@ -5,7 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import json
 import time
 
-# ESTILOS CSS PARA MÓVIL
+# ESTILOS CSS PARA MÓVIL Y PARA CAMPOS EN MISMA FILA
 st.markdown("""
     <style>
     .block-container {
@@ -51,10 +51,13 @@ if opcion_tienda != "Seleccionar":
     elif opcion_tienda == "Midtown":
         vendedora = st.selectbox("Vendedora:", ["Ana Isabel Osuna"])
 
-    personas_entraron = st.number_input("Personas que ingresaron", min_value=0, step=1)
-    personas_compraron = st.number_input("Personas que compraron", min_value=0, step=1)
-    conversion = (personas_compraron / personas_entraron * 100) if personas_entraron > 0 else 0
-    st.markdown(f"<div style='font-size:20px; font-weight:bold;'>Conversión de venta: {conversion:.2f}%</div>", unsafe_allow_html=True)
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        personas_entraron = st.number_input("Personas que ingresaron", min_value=0, step=1)
+        personas_compraron = st.number_input("Personas que compraron", min_value=0, step=1)
+    with col2:
+        conversion = (personas_compraron / personas_entraron * 100) if personas_entraron > 0 else 0
+        st.markdown(f"<div style='margin-top:35px; font-size:20px; font-weight:bold;'>Conversión de venta:<br>{conversion:.2f}%</div>", unsafe_allow_html=True)
 
     comentarios = st.text_area("Comentarios u observaciones (opcional)")
 
@@ -62,9 +65,10 @@ if opcion_tienda != "Seleccionar":
 
     modelos_data = []
     for i in range(10):
-        modelo = st.text_input(f"Modelo {i+1}", key=f"modelo_{i}")
-        color = st.text_input(f"Color {i+1}", key=f"color_{i}")
-        talla = st.text_input(f"Talla {i+1}", key=f"talla_{i}")
+        cols = st.columns([3, 3, 2], gap="small")
+        modelo = cols[0].text_input("", key=f"modelo_{i}", placeholder="Modelo")
+        color = cols[1].text_input("", key=f"color_{i}", placeholder="Color")
+        talla = cols[2].text_input("", key=f"talla_{i}", placeholder="Talla")
         if modelo or color or talla:
             modelos_data.append((modelo, color, talla))
 
