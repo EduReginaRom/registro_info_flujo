@@ -65,7 +65,8 @@ if opcion_tienda != "Seleccionar":
     3. Selecciona la vendedora  
     4. Ingresa la cantidad de personas que visitaron la tienda en el día.  
     5. Ingresa la cantidad de personas que compraron  
-    6. Comentarios acerca de incidencias
+    6. Ingresa el monto total vendido  
+    7. Registra los modelos no disponibles
     """)
 
     fecha = st.date_input("Fecha", datetime.today())
@@ -77,6 +78,10 @@ if opcion_tienda != "Seleccionar":
     elif opcion_tienda == "Midtown":
         vendedora = st.selectbox("Vendedora:", ["Ana Isabel Osuna", "Carmen Lizette Ramirez"])
 
+    monto_venta = st.number_input("Cantidad monetaria vendida ($)", min_value=0.0, step=100.0, format="%.2f")
+    monto_formateado = "${:,.2f}".format(monto_venta)
+    st.markdown(f"<div style='font-size:18px; margin-top: -10px;'>💰 Monto capturado: <strong>{monto_formateado}</strong></div>", unsafe_allow_html=True)
+
     col1, col2 = st.columns([2, 1])
     with col1:
         personas_entraron = st.number_input("Personas que ingresaron", min_value=0, step=1)
@@ -84,9 +89,6 @@ if opcion_tienda != "Seleccionar":
     with col2:
         conversion = (personas_compraron / personas_entraron * 100) if personas_entraron > 0 else 0
         st.markdown(f"<div style='margin-top:35px; font-size:20px; font-weight:bold;'>Conversión de venta:<br>{conversion:.2f}%</div>", unsafe_allow_html=True)
-
-    if personas_compraron > personas_entraron:
-        st.error("⚠️ El número de personas que compraron no puede ser mayor al número de personas que ingresaron.")
 
     comentarios = st.text_area("Comentarios u observaciones (opcional)")
 
@@ -108,11 +110,13 @@ if opcion_tienda != "Seleccionar":
 
     if st.button("Enviar registro"):
         if personas_compraron > personas_entraron:
-            st.error("No se puede registrar: el número de personas que compraron excede al número de personas que ingresaron.")
+            st.error("⚠️ El número de personas que compraron no puede ser mayor al número de personas que ingresaron.")
+        elif monto_venta == 0:
+            st.error("⚠️ Debes ingresar un monto mayor a cero en la cantidad monetaria vendida.")
         else:
             # Guardar datos generales en hoja principal
             datos_generales = [fecha.strftime("%Y-%m-%d"), hora_formateada, opcion_tienda, vendedora,
-                            personas_entraron, personas_compraron, f"{conversion:.2f}%", comentarios]
+                               monto_venta, personas_entraron, personas_compraron, f"{conversion:.2f}%", comentarios]
             sheet.append_row(datos_generales)
 
             # Guardar modelos back in stock en hoja separada
