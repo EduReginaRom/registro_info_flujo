@@ -5,7 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import json
 import time
 
-# ESTILOS CSS PARA MÓVIL Y PARA CAMPOS EN MISMA FILA
+# --- ESTILOS CSS PARA MÓVIL Y CAMPOS ---
 st.markdown("""
     <style>
     .block-container {
@@ -42,7 +42,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# CONFIGURACIÓN GOOGLE SHEETS DESDE SECRETO
+# --- GOOGLE SHEETS ---
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 credentials_dict = json.loads(st.secrets["GOOGLE_CREDENTIALS"])
 creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
@@ -51,12 +51,28 @@ spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RSgRXD
 sheet = spreadsheet.sheet1
 back_in_stock_sheet = spreadsheet.worksheet("Back in stock - Tiendas fisicas")
 
-# MENÚ PRINCIPAL
-st.title("Registro Diario Clientas")
-opcion_tienda = st.selectbox("Selecciona tienda:", ["Seleccionar", "Monte Líbano", "Midtown"])
+# --- USUARIOS Y TIENDAS ---
+USUARIOS_VALIDOS = {
+    "phpolanco": {"password": "rrphpolx1", "tienda": "PH Polanco", "vendedoras": ["Andrea López", "María Pérez"]},
+    "montelibano": {"password": "rrmontex1", "tienda": "Monte Líbano", "vendedoras": ["Patricia Cedillo", "Rebeca Tellez"]},
+    "midtown": {"password": "rrmidx1", "tienda": "Midtown", "vendedoras": ["Ana Isabel Osuna", "Carmen Lizette Ramirez"]},
+}
 
-if opcion_tienda != "Seleccionar":
-    st.subheader(f"Formulario - {opcion_tienda}")
+# --- AUTENTICACIÓN ---
+st.title("Registro Diario de Clientas")
+
+st.subheader("🔐 Inicia sesión")
+
+usuario = st.text_input("Usuario")
+password = st.text_input("Contraseña", type="password")
+
+if usuario in USUARIOS_VALIDOS and password == USUARIOS_VALIDOS[usuario]["password"]:
+    st.success("✅ Autenticación exitosa")
+
+    tienda = USUARIOS_VALIDOS[usuario]["tienda"]
+    vendedoras = USUARIOS_VALIDOS[usuario]["vendedoras"]
+
+    st.subheader(f"Formulario - {tienda}")
 
     st.markdown("""
     **Instrucciones:**
@@ -73,10 +89,7 @@ if opcion_tienda != "Seleccionar":
     hora_raw = st.time_input("Hora")
     hora_formateada = hora_raw.strftime("%I:%M %p")  # Formato 12 horas
 
-    if opcion_tienda == "Monte Líbano":
-        vendedora = st.selectbox("Vendedora:", ["Patricia Cedillo", "Rebeca Tellez"])
-    elif opcion_tienda == "Midtown":
-        vendedora = st.selectbox("Vendedora:", ["Ana Isabel Osuna", "Carmen Lizette Ramirez"])
+    vendedora = st.selectbox("Vendedora:", vendedoras)
 
     monto_venta = st.number_input("Cantidad monetaria vendida ($)", min_value=0.0, step=100.0, format="%.2f")
     monto_formateado = "${:,.2f}".format(monto_venta)
@@ -93,11 +106,7 @@ if opcion_tienda != "Seleccionar":
     comentarios = st.text_area("Comentarios u observaciones (opcional)")
 
     st.markdown("### Modelos Solicitados")
-
-    st.markdown("""
-    **Instrucciones:**  
-    1. Ingresa los modelos, colores y tallas que no tuvimos disponibles a la venta durante el día.
-    """)
+    st.markdown("**Instrucciones:** Ingresa los modelos, colores y tallas que no tuvimos disponibles a la venta durante el día.")
 
     modelos_data = []
     for i in range(10):
@@ -114,16 +123,23 @@ if opcion_tienda != "Seleccionar":
         elif monto_venta == 0:
             st.error("⚠️ Debes ingresar un monto mayor a cero en la cantidad monetaria vendida.")
         else:
-            # Guardar datos generales en hoja principal
-            datos_generales = [fecha.strftime("%Y-%m-%d"), hora_formateada, opcion_tienda, vendedora,
-                               monto_venta, personas_entraron, personas_compraron, f"{conversion:.2f}%", comentarios]
+            datos_generales = [
+                fecha.strftime("%Y-%m-%d"),
+                hora_formateada,
+                tienda,
+                vendedora,
+                monto_venta,
+                personas_entraron,
+                personas_compraron,
+                f"{conversion:.2f}%",
+                comentarios
+            ]
             sheet.append_row(datos_generales)
 
-            # Guardar modelos back in stock en hoja separada
             for m in modelos_data:
-                fila_back = [fecha.strftime("%Y-%m-%d"), hora_formateada, opcion_tienda, vendedora, m[0], m[1], m[2]]
+                fila_back = [fecha.strftime("%Y-%m-%d"), hora_formateada, tienda, vendedora, m[0], m[1], m[2]]
                 back_in_stock_sheet.append_row(fila_back)
-                time.sleep(1)  # Evita error 429 por exceso de escritura simultánea
+                time.sleep(1)  # Evita error 429
 
             st.markdown("""
             <div class='registro-exitoso'>✅ Registro exitoso</div>
@@ -133,3 +149,8 @@ if opcion_tienda != "Seleccionar":
                 }, 3000);
             </script>
             """, unsafe_allow_html=True)
+
+else:
+    if usuario and password:
+        st.error("❌ Usuario o contraseña incorrectos")
+    st.stop()  # Detiene ejecución hasta que se autentique
