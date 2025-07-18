@@ -5,7 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import json
 import time
 
-# --- ESTILOS CSS PARA MÓVIL Y CAMPOS ---
+# --- ESTILOS CSS PARA MÓVIL Y FORMATO ---
 st.markdown("""
     <style>
     .block-container {
@@ -39,6 +39,18 @@ st.markdown("""
         z-index: 9999;
         text-align: center;
     }
+    .leyenda-tienda {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #336699;
+        background-color: #f0f8ff;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid #336699;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -53,25 +65,56 @@ back_in_stock_sheet = spreadsheet.worksheet("Back in stock - Tiendas fisicas")
 
 # --- USUARIOS Y TIENDAS ---
 USUARIOS_VALIDOS = {
-    "phpolanco": {"password": "rrphpolx1", "tienda": "PH Polanco", "vendedoras": ["Andrea López", "María Pérez"]},
-    "montelibano": {"password": "rrmontex1", "tienda": "Monte Líbano", "vendedoras": ["Patricia Cedillo", "Rebeca Tellez"]},
-    "midtown": {"password": "rrmidx1", "tienda": "Midtown", "vendedoras": ["Ana Isabel Osuna", "Carmen Lizette Ramirez"]},
+    "phpolanco": {
+        "password": "rrphpolx1",
+        "tienda": "PH Polanco",
+        "vendedoras": ["Martha Patricia Calderón Saucedo"]
+    },
+    "phperisur": {
+        "password": "rrphperx1",
+        "tienda": "PH Perisur",
+        "vendedoras": ["Martha Patricia Calderón Saucedo"]
+    },
+    "phdurango": {
+        "password": "rrphdurx1",
+        "tienda": "PH Durango",
+        "vendedoras": ["Erika Sharon Bustamante Aguilar"]
+    },
+    "phsantafe": {
+        "password": "rrphsanx1",
+        "tienda": "PH Santa Fe",
+        "vendedoras": ["Erika Sharon Bustamante Aguilar"]
+    },
+    "phmitikah": {
+        "password": "rrphmitx1",
+        "tienda": "PH Mitikah",
+        "vendedoras": ["Maria Marina Ayuzo Fernández"]
+    },
+    "montelibano": {
+        "password": "rrmontex1",
+        "tienda": "Monte Líbano",
+        "vendedoras": ["Patricia Cedillo", "Rebeca Tellez"]
+    },
+    "midtown": {
+        "password": "rrmidx1",
+        "tienda": "Midtown",
+        "vendedoras": ["Ana Isabel Osuna", "Carmen Lizette Ramirez"]
+    }
 }
 
 # --- AUTENTICACIÓN ---
 st.title("Registro Diario de Clientas")
 
 st.subheader("🔐 Inicia sesión")
-
 usuario = st.text_input("Usuario")
 password = st.text_input("Contraseña", type="password")
 
 if usuario in USUARIOS_VALIDOS and password == USUARIOS_VALIDOS[usuario]["password"]:
-    st.success("✅ Autenticación exitosa")
-
     tienda = USUARIOS_VALIDOS[usuario]["tienda"]
     vendedoras = USUARIOS_VALIDOS[usuario]["vendedoras"]
 
+    st.markdown(f"<div class='leyenda-tienda'>📍 {tienda}</div>", unsafe_allow_html=True)
+    st.success("✅ Autenticación exitosa")
     st.subheader(f"Formulario - {tienda}")
 
     st.markdown("""
@@ -87,7 +130,7 @@ if usuario in USUARIOS_VALIDOS and password == USUARIOS_VALIDOS[usuario]["passwo
 
     fecha = st.date_input("Fecha", datetime.today())
     hora_raw = st.time_input("Hora")
-    hora_formateada = hora_raw.strftime("%I:%M %p")  # Formato 12 horas
+    hora_formateada = hora_raw.strftime("%I:%M %p")
 
     vendedora = st.selectbox("Vendedora:", vendedoras)
 
@@ -139,7 +182,7 @@ if usuario in USUARIOS_VALIDOS and password == USUARIOS_VALIDOS[usuario]["passwo
             for m in modelos_data:
                 fila_back = [fecha.strftime("%Y-%m-%d"), hora_formateada, tienda, vendedora, m[0], m[1], m[2]]
                 back_in_stock_sheet.append_row(fila_back)
-                time.sleep(1)  # Evita error 429
+                time.sleep(1)  # Para evitar error 429 por muchas escrituras
 
             st.markdown("""
             <div class='registro-exitoso'>✅ Registro exitoso</div>
@@ -153,4 +196,4 @@ if usuario in USUARIOS_VALIDOS and password == USUARIOS_VALIDOS[usuario]["passwo
 else:
     if usuario and password:
         st.error("❌ Usuario o contraseña incorrectos")
-    st.stop()  # Detiene ejecución hasta que se autentique
+    st.stop()
