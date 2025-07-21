@@ -163,7 +163,7 @@ if usuario in USUARIOS_VALIDOS and password == USUARIOS_VALIDOS[usuario]["passwo
     if st.button("Enviar registro"):
         if personas_compraron > personas_entraron:
             st.error("⚠️ El número de personas que compraron no puede ser mayor al número de personas que ingresaron.")
-        elif monto_venta == 0:
+        elif monto_venta < 0:
             st.error("⚠️ Debes ingresar un monto mayor a cero en la cantidad monetaria vendida.")
         else:
             datos_generales = [
