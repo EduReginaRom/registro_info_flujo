@@ -81,7 +81,7 @@ USUARIOS_VALIDOS = {
         "vendedoras": ["Erika Sharon Bustamante Aguilar"]
     },
     "phsantafe": {
-        "password": "rrphsanx1",
+        "password": "rrphdurx1",
         "tienda": "PH Santa Fe",
         "vendedoras": ["Erika Sharon Bustamante Aguilar"]
     },
@@ -197,3 +197,4 @@ else:
     if usuario and password:
         st.error("❌ Usuario o contraseña incorrectos")
     st.stop()
+
