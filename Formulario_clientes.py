@@ -135,13 +135,12 @@ if usuario in USUARIOS_VALIDOS and password == USUARIOS_VALIDOS[usuario]["passwo
     vendedora = st.selectbox("Vendedora:", vendedoras)
 
     monto_venta_str = st.text_input("Cantidad monetaria vendida ($)", value="", placeholder="Ej: 1250.50")
-        try:
-    monto_venta = float(monto_venta_str.replace(",", "").replace("$", ""))
-        except:
-    monto_venta = 0.0
+    try:
+        monto_venta = float(monto_venta_str.replace(",", "").replace("$", ""))
+    except:
+        monto_venta = 0.0
 
     monto_formateado = "${:,.2f}".format(monto_venta)
-
     st.markdown(f"<div style='font-size:18px; margin-top: -10px;'>💰 Monto capturado: <strong>{monto_formateado}</strong></div>", unsafe_allow_html=True)
 
     col1, col2 = st.columns([2, 1])
@@ -203,6 +202,7 @@ else:
     if usuario and password:
         st.error("❌ Usuario o contraseña incorrectos")
     st.stop()
+
 
 
 
