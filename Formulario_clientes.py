@@ -134,7 +134,7 @@ if usuario in USUARIOS_VALIDOS and password == USUARIOS_VALIDOS[usuario]["passwo
 
     vendedora = st.selectbox("Vendedora:", vendedoras)
 
-    monto_venta = st.number_input("Cantidad monetaria vendida ($)", min_value=0.0, step=100.0, format="%.2f")
+    monto_venta = st.number_input("Cantidad monetaria vendida ($)", min_value=0.0, format="%.2f")
     monto_formateado = "${:,.2f}".format(monto_venta)
     st.markdown(f"<div style='font-size:18px; margin-top: -10px;'>💰 Monto capturado: <strong>{monto_formateado}</strong></div>", unsafe_allow_html=True)
 
@@ -197,4 +197,5 @@ else:
     if usuario and password:
         st.error("❌ Usuario o contraseña incorrectos")
     st.stop()
+
 
