@@ -73,7 +73,7 @@ USUARIOS_VALIDOS = {
     "phperisur": {
         "password": "rrphperx1",
         "tienda": "PH Perisur",
-        "vendedoras": ["Martha Patricia Calderón Saucedo"]
+        "vendedoras": ["María de Jesús Juarez Guzmán"]
     },
     "phdurango": {
         "password": "rrphdurx1",
@@ -202,6 +202,7 @@ else:
     if usuario and password:
         st.error("❌ Usuario o contraseña incorrectos")
     st.stop()
+
 
 
 
